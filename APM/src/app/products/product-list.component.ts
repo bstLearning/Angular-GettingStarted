@@ -6,6 +6,10 @@ import { Component } from "@angular/core";
 })
 export default class ProductListComponent {
     pageTitle = 'Product List!';
+    imageWidth = 50;
+    imageMargin = 2;
+    showImage = false;
+    listFilter = 'cart';
     products = [
         {
           "productId": 1,
@@ -27,5 +31,9 @@ export default class ProductListComponent {
           "starRating": 4.2,
           "imageUrl": "assets/images/garden_cart.png"
         },
-    ]
+    ];
+
+    toggleImage(): void {
+      this.showImage = !this.showImage;
+    }
 };
