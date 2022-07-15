@@ -1,4 +1,5 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Subscription } from "rxjs";
 import { ProductService } from "./product.service";
 import { Iproduct } from "./prouduct";
 
@@ -7,11 +8,13 @@ import { Iproduct } from "./prouduct";
     templateUrl: './product-list.component.html',
     styleUrls: ['./product-list.component.css']
 })
-export default class ProductListComponent implements OnInit{
+export default class ProductListComponent implements OnInit, OnDestroy{
     pageTitle = 'Product List!';
     imageWidth = 50;
     imageMargin = 2;
     showImage = false;
+    errorMessage = '';
+    sub!: Subscription;  // definite assignmnet assertion in TypeScript
 
     private _listFilter: string = '';
     get listFilter(): string {
@@ -39,8 +42,19 @@ export default class ProductListComponent implements OnInit{
     }
 
     ngOnInit(): void {
-      this.products = this.productService.getProducts()
-      this.filteredProducts = this.products
+      // observer obj observe the stream 
+      // and responds 3 types of notifications: next, error, complete
+      this.sub = this.productService.getProducts().subscribe({
+        next: products => {
+          this.products = products;
+          this.filteredProducts = this.products;
+        },
+        error: err => this.errorMessage = err
+      }) 
+    }
+
+    ngOnDestroy(): void {
+      this.sub.unsubscribe();
     }
 
     onRatingClicked(message: string): void {
